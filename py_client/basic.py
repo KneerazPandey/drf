@@ -1,6 +1,7 @@
 import requests
 
-endpoint = 'https://httpbin.org/anything'
+# endpoint = 'https://httpbin.org/anything'
+endpoint = 'http://localhost:8000/api/'
 
 # API -> Application Programming Interface.
 # Http Request (Not API Request) -> HTML -> Just made for the browser.
@@ -10,7 +11,14 @@ endpoint = 'https://httpbin.org/anything'
 # response = requests.get(endpoint)
 
 # Passing an own json data to requests.
-response = requests.get(endpoint, json={'name': 'Niraj Pandey'}, data={'image': 'this is form data'})
+response = requests.get(
+    endpoint, 
+    params={'query': 'this is for searching'}, 
+    json={'name': 'Niraj Pandey'}, 
+    data={'image': 'this is form data'}
+)
+#? Note: The (data) can be obtained in django with request.body and in DRF with request.data
+#? Note: The (?query or params) can be obtained in django with request.GET and in DRF with request.query_params
 
 print(f'The status code is: {response.status_code}')
 print(response.json())
