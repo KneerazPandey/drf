@@ -6,6 +6,7 @@ from rest_framework.decorators import api_view
 from products.models import Product
 from django.forms.models import model_to_dict
 from rest_framework import status
+from products.serializers import ProductSerializer
 
 
 def api_home(request: HttpRequest):
@@ -47,3 +48,10 @@ def new_api_home_rest_api(request: Request):
         data = model_to_dict(model_data)
     
     return Response(data=data)
+
+
+@api_view(['GET'])
+def api_home_with_response_from_serializer(request: Request):
+    model_data = Product.objects.all().order_by('?').first()
+    serializer = ProductSerializer(model_data)
+    return Response(data=serializer.data)
