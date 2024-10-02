@@ -1,7 +1,11 @@
 import json
-from django.http import HttpRequest, JsonResponse, HttpResponse
+from django.http import HttpRequest, JsonResponse
+from rest_framework.response import Response
+from rest_framework.request import Request
+from rest_framework.decorators import api_view
 from products.models import Product
 from django.forms.models import model_to_dict
+from rest_framework import status
 
 
 def api_home(request: HttpRequest):
@@ -32,3 +36,14 @@ def api_product(request: HttpRequest):
     #     data = model_to_dict(model_data, fields=['id', 'title'])
     #     data = json.dumps(data)
     # return HttpResponse(data, headers={'content-type': 'application/json'})
+    
+    
+@api_view(["GET"])
+def new_api_home_rest_api(request: Request):
+    '''This is the simple Django REST API View'''
+    model_data = Product.objects.all().order_by('?').first()
+    data = {}
+    if model_data:
+        data = model_to_dict(model_data)
+    
+    return Response(data=data)
