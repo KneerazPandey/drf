@@ -55,3 +55,13 @@ def api_home_with_response_from_serializer(request: Request):
     model_data = Product.objects.all().order_by('?').first()
     serializer = ProductSerializer(model_data)
     return Response(data=serializer.data)
+
+
+@api_view(['POST'])
+def api_home_with_post_data(request: Request):
+    serializer = ProductSerializer(data=request.data)
+    if serializer.is_valid():
+        instance = serializer.save()
+        data = serializer.data
+        return Response(data=data, status=status.HTTP_200_OK)
+    return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
