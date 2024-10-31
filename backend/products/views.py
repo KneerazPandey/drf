@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, mixins
 from . models import Product
 from . serializers import ProductSerializer
 from rest_framework.request import Request
@@ -81,3 +81,32 @@ def function_based_list_create_detail_view(request: Request, pk=None):
     
     else:
         return Response(data={'error': 'Invalid http methods'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    
+    
+class ProductMixinView(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    generics.GenericAPIView
+):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    lookup_field = 'pk'
+    
+    def get(self, request: Request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        if pk is not None:
+            return self.retrieve(request, args, kwargs)
+        return self.list(request, args, kwargs)
+    
+    def post(self, request: Request, *args, **kwargs):
+        return self.create(request, args, kwargs)
+    
+    def perform_create(self, serializer):
+        title = serializer.validated_data.get('title')
+        content = serializer.validated_data.get('content')
+        if not content:
+            content = title
+            
+        return serializer.save(content=content)
